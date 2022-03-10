@@ -96,6 +96,7 @@ unsigned int tabspaces = 8;
 /* bg opacity */
 float alpha = 0.8;
 float alphaUnfocused = 0.7;
+
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
 	/* 8 normal colors */
@@ -109,7 +110,7 @@ static const char *colorname[] = {
 	"#ab8ad1",
 
 	/* 8 bright colors */
-	"#000000",
+	"#444444",
 	"#ad2240",
 	"#2eaa72",
 	"#cca449",
