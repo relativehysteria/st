@@ -3,7 +3,7 @@
 
 #include "colors.h"
 
-const struct colors_t papertheme = {
+static struct colors_t papertheme = {
     .alpha = 0.8,
     .alphaUnfocused = 0.7,
 

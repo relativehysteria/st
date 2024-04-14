@@ -17,6 +17,7 @@
 #include <X11/XKBlib.h>
 
 char *argv0;
+#include "colors/colors.h"
 #include "arg.h"
 #include "st.h"
 #include "win.h"
@@ -167,6 +168,7 @@ static int evcol(XEvent *);
 static int evrow(XEvent *);
 
 static void resetglobalcolors(void);
+static void timeresetcolors(void);
 
 static void expose(XEvent *);
 static void visibility(XEvent *);
@@ -350,11 +352,10 @@ evrow(XEvent *e)
 	return y / win.ch;
 }
 
-#define SET_GLOBAL_COLORVAR(var)  var = colorscheme.var;
-
 void
 resetglobalcolors(void)
 {
+    #define SET_GLOBAL_COLORVAR(var)  var = colorscheme->var;
     SET_GLOBAL_COLORVAR(alpha);
     SET_GLOBAL_COLORVAR(alphaUnfocused);
     SET_GLOBAL_COLORVAR(colorname);
@@ -383,7 +384,7 @@ timeresetcolors(void)
         : cur_val >= light_val || cur_val < dark_val;
 
     /* set the colorscheme */
-    colorscheme = use_light ? light_colorscheme : dark_colorscheme;
+    colorscheme = use_light ? light_theme : dark_theme;
     resetglobalcolors();
 }
 

@@ -1,7 +1,24 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-/***** globals used by st *****/
+#include <stdbool.h>
+#include <time.h>
+
+/***** struct as defined by the colorscheme headers ***************************/
+
+struct colors_t {
+    float alpha;
+    float alphaUnfocused;
+
+    unsigned int defaultfg;
+    unsigned int defaultbg;
+    unsigned int defaultcs;
+    unsigned int defaultrcs;
+
+    const char *colorname[32];
+};
+
+/***** globals used by st *****************************************************/
 
 /* background opacity */
 float alpha;
@@ -17,19 +34,8 @@ unsigned int defaultbg;
 static unsigned int defaultcs;
 static unsigned int defaultrcs;
 
-
-/***** struct as defined by the colorscheme headers *****/
-struct colors_t {
-    float alpha;
-    float alphaUnfocused;
-
-    unsigned int defaultfg;
-    unsigned int defaultbg;
-    unsigned int defaultcs;
-    unsigned int defaultrcs;
-
-    const char *colorname[32];
-};
+/* whether the colorscheme can only be changed manually. */
+static bool colorscheme_locked = false;
 
 #include "interspectre.h"
 #include "papertheme.h"
