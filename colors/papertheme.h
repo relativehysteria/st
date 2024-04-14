@@ -4,6 +4,8 @@
 #include "colors.h"
 
 static struct colors_t papertheme = {
+    .name = "papertheme",
+
     .alpha = 0.8,
     .alphaUnfocused = 0.7,
 
