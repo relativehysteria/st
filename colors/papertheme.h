@@ -1,0 +1,41 @@
+#ifndef PAPERTHEME_H
+#define PAPERTHEME_H
+
+#include "colors.h"
+
+const struct colors_t papertheme = {
+    .alpha = 0.8,
+    .alphaUnfocused = 0.7,
+
+    .defaultbg = 7,
+    .defaultfg = 0,
+    .defaultcs = 30,
+    .defaultrcs = 31,
+
+    .colorname = {
+        "#000000",
+        "#CC3E28",
+        "#216609",
+        "#B58900",
+        "#1E6FCC",
+        "#5C21A5",
+        "#158C86",
+        "#AAAAAA",
+
+        "#555555",
+        "#CC3E28",
+        "#216609",
+        "#B58900",
+        "#1E6FCC",
+        "#5C21A5",
+        "#158C86",
+        "#AAAAAA",
+
+        [29] = 0,
+
+        "#F2EEDE",
+        "#000000",
+    },
+};
+
+#endif /* PAPERTHEME_H */

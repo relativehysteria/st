@@ -166,6 +166,8 @@ static void xseturgency(int);
 static int evcol(XEvent *);
 static int evrow(XEvent *);
 
+static void setglobalcolors(struct colors_t *);
+
 static void expose(XEvent *);
 static void visibility(XEvent *);
 static void unmap(XEvent *);
@@ -346,6 +348,20 @@ evrow(XEvent *e)
 	int y = e->xbutton.y - borderpx;
 	LIMIT(y, 0, win.th - 1);
 	return y / win.ch;
+}
+
+#define SET_GLOBAL_COLORVAR(var)  var = colors->var;
+
+void
+setglobalcolors(struct colors_t *colors)
+{
+    SET_GLOBAL_COLORVAR(alpha);
+    SET_GLOBAL_COLORVAR(alphaUnfocused);
+    SET_GLOBAL_COLORVAR(colorname);
+    SET_GLOBAL_COLORVAR(defaultfg);
+    SET_GLOBAL_COLORVAR(defaultbg);
+    SET_GLOBAL_COLORVAR(defaultcs);
+    SET_GLOBAL_COLORVAR(defaultrcs);
 }
 
 void
@@ -2045,6 +2061,8 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
+    setglobalcolors(&colorscheme);
+
 	xw.l = xw.t = 0;
 	xw.isfixed = False;
 	xsetcursor(cursorshape);

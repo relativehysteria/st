@@ -1,5 +1,10 @@
 /* See LICENSE file for copyright and license details. */
 
+#include "colors/colors.h"
+
+/* colorscheme settings */
+static struct colors_t colorscheme = papertheme;
+
 /*
  * appearance
  *
@@ -92,49 +97,6 @@ char *termname = "xterm";
  *	stty tabs
  */
 unsigned int tabspaces = 8;
-
-/* bg opacity */
-float alpha = 0.8;
-float alphaUnfocused = 0.7;
-
-/* Terminal colors (16 first used in escape sequence) */
-static const char *colorname[] = {
-	/* 8 normal colors */
-	"#000000",
-	"#8e273e",
-	"#308e64",
-	"#af9149",
-	"#4452af",
-	"#a744af",
-	"#2ea2ad",
-	"#ab8ad1",
-
-	/* 8 bright colors */
-	"#444444",
-	"#ad2240",
-	"#2eaa72",
-	"#cca449",
-	"#4f60cc",
-	"#c042c9",
-	"#2db7c4",
-	"#ad8cd3",
-
-	[255] = 0,
-
-	/* more colors can be added after 255 to use with DefaultXX */
-	"#cccccc",
-	"#555555",
-};
-
-
-/*
- * Default colors (colorname index)
- * foreground, background, cursor, reverse cursor
- */
-unsigned int defaultfg = 7;
-unsigned int defaultbg = 0;
-static unsigned int defaultcs = 256;
-static unsigned int defaultrcs = 257;
 
 /*
  * Default shape of cursor
