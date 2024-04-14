@@ -1,9 +1,16 @@
 /* See LICENSE file for copyright and license details. */
 
 #include "colors/colors.h"
+#include <time.h>
 
 /* colorscheme settings */
-static struct colors_t colorscheme = papertheme;
+const struct colors_t light_colorscheme = papertheme;
+const struct colors_t dark_colorscheme  = interspectre;
+static struct colors_t colorscheme      = dark_colorscheme;
+
+/* the specific times when the colorschemes are to go into effect */
+static struct tm light_time = { .tm_hour = 4,  .tm_min = 0 };
+static struct tm dark_time  = { .tm_hour = 20, .tm_min = 0 };
 
 /*
  * appearance

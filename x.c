@@ -166,7 +166,7 @@ static void xseturgency(int);
 static int evcol(XEvent *);
 static int evrow(XEvent *);
 
-static void setglobalcolors(struct colors_t *);
+static void resetglobalcolors(void);
 
 static void expose(XEvent *);
 static void visibility(XEvent *);
@@ -350,10 +350,10 @@ evrow(XEvent *e)
 	return y / win.ch;
 }
 
-#define SET_GLOBAL_COLORVAR(var)  var = colors->var;
+#define SET_GLOBAL_COLORVAR(var)  var = colorscheme.var;
 
 void
-setglobalcolors(struct colors_t *colors)
+resetglobalcolors(void)
 {
     SET_GLOBAL_COLORVAR(alpha);
     SET_GLOBAL_COLORVAR(alphaUnfocused);
@@ -362,6 +362,29 @@ setglobalcolors(struct colors_t *colors)
     SET_GLOBAL_COLORVAR(defaultbg);
     SET_GLOBAL_COLORVAR(defaultcs);
     SET_GLOBAL_COLORVAR(defaultrcs);
+}
+
+void
+timeresetcolors(void)
+{
+    /* get the current time */
+    time_t now = time(NULL);
+    struct tm *timeinfo = localtime(&now);
+
+    /* if the scheme changes on the same hour, check minutes */
+    bool use_mins = light_time.tm_hour == dark_time.tm_hour;
+    int dark_val  = use_mins ? dark_time.tm_min  : dark_time.tm_hour;
+    int light_val = use_mins ? light_time.tm_min : light_time.tm_hour;
+    int cur_val   = use_mins ? timeinfo->tm_min  : timeinfo->tm_hour;
+
+    /* check whether we should be using the light theme now */
+    bool use_light = (light_val < dark_val)
+        ? cur_val >= light_val && cur_val < dark_val
+        : cur_val >= light_val || cur_val < dark_val;
+
+    /* set the colorscheme */
+    colorscheme = use_light ? light_colorscheme : dark_colorscheme;
+    resetglobalcolors();
 }
 
 void
@@ -2061,7 +2084,7 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-    setglobalcolors(&colorscheme);
+    timeresetcolors();
 
 	xw.l = xw.t = 0;
 	xw.isfixed = False;
