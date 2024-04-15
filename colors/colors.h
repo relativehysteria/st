@@ -7,8 +7,6 @@
 /***** struct as defined by the colorscheme headers ***************************/
 
 struct colors_t {
-    char *name;
-
     float alpha;
     float alphaUnfocused;
 

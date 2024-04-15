@@ -4,8 +4,6 @@
 #include "colors.h"
 
 static struct colors_t interspectre = {
-    .name = "interspectre",
-
     .alpha = 0.8,
     .alphaUnfocused = 0.7,
 
