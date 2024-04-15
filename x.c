@@ -366,6 +366,9 @@ evrow(XEvent *e)
 void
 resetglobalcolors(void)
 {
+    int oldbg = defaultbg;
+    int oldfg = defaultfg;
+
     #define SET_GLOBAL_COLORVAR(var)  var = colorscheme->var;
     SET_GLOBAL_COLORVAR(alpha);
     SET_GLOBAL_COLORVAR(alphaUnfocused);
@@ -375,10 +378,13 @@ resetglobalcolors(void)
     SET_GLOBAL_COLORVAR(defaultcs);
     SET_GLOBAL_COLORVAR(defaultrcs);
 
-    if (can_reload) {
-        xloadcols();
-        cresize(win.w, win.h);
-    }
+    if (!can_reload) { return; }
+
+    xloadcols();
+    if (defaultbg != oldbg) tupdatebgcolor(oldbg, defaultbg);
+    if (defaultfg != oldfg) tupdatefgcolor(oldfg, defaultfg);
+    cresize(win.w, win.h);
+    redraw();
 }
 
 void
