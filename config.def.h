@@ -6,7 +6,7 @@
 /* colorscheme settings */
 static struct colors_t *const light_theme = &papertheme;
 static struct colors_t *const dark_theme  = &interspectre;
-static struct colors_t *colorscheme = dark_theme;
+static struct colors_t *colorscheme;
 
 /* the specific times when the colorschemes are to go into effect */
 const struct tm dark_time  = { .tm_hour = 20, .tm_min = 0 };

@@ -169,7 +169,7 @@ static int evcol(XEvent *);
 static int evrow(XEvent *);
 
 static void resetglobalcolors(void);
-static void timeresetcolors(void);
+static bool timeresetcolors(void);
 
 static void expose(XEvent *);
 static void visibility(XEvent *);
@@ -387,31 +387,35 @@ resetglobalcolors(void)
     redraw();
 }
 
-void
+/* returns whether the colors have been changed */
+bool
 timeresetcolors(void)
 {
     /* if the colorscheme is locked, we can't change it. */
-    if (colorscheme_locked) { return; }
+    if (colorscheme_locked) { return false; }
 
     /* get the current time */
     time_t now = time(NULL);
-    struct tm *timeinfo = localtime(&now);
-
-    /* if the scheme changes on the same hour, check minutes */
-    bool use_mins = light_time.tm_hour == dark_time.tm_hour;
-    int dark_val  = use_mins ? dark_time.tm_min  : dark_time.tm_hour;
-    int light_val = use_mins ? light_time.tm_min : light_time.tm_hour;
-    int cur_val   = use_mins ? timeinfo->tm_min  : timeinfo->tm_hour;
+    struct tm current = *localtime(&now);
 
     /* check whether we should be using the light theme now */
-    bool use_light = (light_val < dark_val)
-        ? cur_val >= light_val && cur_val < dark_val
-        : cur_val >= light_val || cur_val < dark_val;
+    #define USE_FIRST(first, second, current) { (first < second) \
+        ? current >= first && current < second \
+        : current >= first || current < second };
+    bool use_mins = light_time.tm_hour == dark_time.tm_hour;
+    bool hr = USE_FIRST(light_time.tm_hour, dark_time.tm_hour, current.tm_hour);
+    bool min = USE_FIRST(light_time.tm_min, dark_time.tm_min, current.tm_min);
+    bool use_light = ((use_mins && min) || (hr && min));
 
     /* set the colorscheme */
-    colorscheme = use_light ? light_theme : dark_theme;
+    struct colors_t *cs_to_use = use_light ? light_theme : dark_theme;
+    if (cs_to_use != colorscheme) {
+        colorscheme = cs_to_use;
+        resetglobalcolors();
+        return true;
+    }
 
-    resetglobalcolors();
+    return false;
 }
 
 void
@@ -2074,7 +2078,7 @@ run(void)
 			}
 		}
 
-		draw();
+        if (!timeresetcolors()) draw();
 		XFlush(xw.dpy);
 		drawing = 0;
 	}
