@@ -57,6 +57,7 @@ static void clipcopy(const Arg *);
 static void clippaste(const Arg *);
 static void numlock(const Arg *);
 static void selpaste(const Arg *);
+static void switchcolors(const Arg *);
 static void zoom(const Arg *);
 static void zoomabs(const Arg *);
 static void zoomreset(const Arg *);
@@ -226,6 +227,7 @@ static DC dc;
 static XWindow xw;
 static XSelection xsel;
 static TermWindow win;
+static bool can_reload = false;
 
 /* Font Ring Cache */
 enum {
@@ -301,6 +303,15 @@ numlock(const Arg *dummy)
 }
 
 void
+switchcolors(const Arg *arg)
+{
+    colorscheme_locked = true;
+
+    colorscheme = (colorscheme == light_theme) ? dark_theme : light_theme;
+    resetglobalcolors();
+}
+
+void
 zoom(const Arg *arg)
 {
 	Arg larg;
@@ -363,11 +374,19 @@ resetglobalcolors(void)
     SET_GLOBAL_COLORVAR(defaultbg);
     SET_GLOBAL_COLORVAR(defaultcs);
     SET_GLOBAL_COLORVAR(defaultrcs);
+
+    if (can_reload) {
+        xloadcols();
+        cresize(win.w, win.h);
+    }
 }
 
 void
 timeresetcolors(void)
 {
+    /* if the colorscheme is locked, we can't change it. */
+    if (colorscheme_locked) { return; }
+
     /* get the current time */
     time_t now = time(NULL);
     struct tm *timeinfo = localtime(&now);
@@ -385,6 +404,7 @@ timeresetcolors(void)
 
     /* set the colorscheme */
     colorscheme = use_light ? light_theme : dark_theme;
+
     resetglobalcolors();
 }
 
@@ -797,24 +817,7 @@ sixd_to_16bit(int x)
 int
 xloadcolor(int i, const char *name, Color *ncolor)
 {
-	XRenderColor color = { .alpha = 0xffff };
-
-	if (!name) {
-		if (BETWEEN(i, 16, 255)) { /* 256 color */
-			if (i < 6*6*6+16) { /* same colors as xterm */
-				color.red   = sixd_to_16bit( ((i-16)/36)%6 );
-				color.green = sixd_to_16bit( ((i-16)/6) %6 );
-				color.blue  = sixd_to_16bit( ((i-16)/1) %6 );
-			} else { /* greyscale */
-				color.red = 0x0808 + 0x0a0a * (i - (6*6*6+16));
-				color.green = color.blue = color.red;
-			}
-			return XftColorAllocValue(xw.dpy, xw.vis,
-			                          xw.cmap, &color, ncolor);
-		} else
-			name = colorname[i];
-	}
-
+    if (!name) name = colorname[i];
 	return XftColorAllocName(xw.dpy, xw.vis, xw.cmap, name, ncolor);
 }
 
@@ -843,7 +846,7 @@ xloadcols(void)
 		for (cp = dc.col; cp < &dc.col[dc.collen]; ++cp)
 			XftColorFree(xw.dpy, xw.vis, xw.cmap, cp);
 	} else {
-		dc.collen = MAX(LEN(colorname), 256);
+		dc.collen = 16;
 		dc.col = xmalloc(dc.collen * sizeof(Color));
 	}
 
@@ -1969,6 +1972,8 @@ resize(XEvent *e)
 void
 run(void)
 {
+    can_reload = true;
+
 	XEvent ev;
 	int w = win.w, h = win.h;
 	fd_set rfd;

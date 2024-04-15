@@ -9,8 +9,8 @@ static struct colors_t *const dark_theme  = &interspectre;
 static struct colors_t *colorscheme = dark_theme;
 
 /* the specific times when the colorschemes are to go into effect */
-const struct tm dark_time = { .tm_hour = 4,  .tm_min = 0 };
-const struct tm light_time = { .tm_hour = 20, .tm_min = 0 };
+const struct tm dark_time  = { .tm_hour = 20, .tm_min = 0 };
+const struct tm light_time = { .tm_hour =  4, .tm_min = 0 };
 
 /*
  * appearance
@@ -164,6 +164,7 @@ static Shortcut shortcuts[] = {
 	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
 	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
 	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
+	{ TERMMOD,              XK_R,           switchcolors,   {.i =  0} },
 	{ TERMMOD,              XK_D,           zoom,           {.f = +2} },
 	{ TERMMOD,              XK_F,           zoom,           {.f = -2} },
 	{ TERMMOD,              XK_Q,           zoomreset,      {.f =  0} },
