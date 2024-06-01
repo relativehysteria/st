@@ -2100,7 +2100,10 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-    timeresetcolors();
+	// timeresetcolors();
+	colorscheme = dark_theme;
+	colorscheme_locked = true;
+	resetglobalcolors();
 
 	xw.l = xw.t = 0;
 	xw.isfixed = False;
