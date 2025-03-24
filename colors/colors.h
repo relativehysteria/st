@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <time.h>
+#include <stdlib.h>
 
 /***** struct as defined by the colorscheme headers ***************************/
 

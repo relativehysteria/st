@@ -1,4 +1,5 @@
 /* See LICENSE for license details. */
+#include <stdlib.h>
 #include <errno.h>
 #include <math.h>
 #include <limits.h>
@@ -394,18 +395,30 @@ timeresetcolors(void)
     /* if the colorscheme is locked, we can't change it. */
     if (colorscheme_locked) { return false; }
 
-    /* get the current time */
-    time_t now = time(NULL);
-    struct tm current = *localtime(&now);
+    /* attempt to call the should_use_light script first */
+    int script_result = system("should_use_light");
 
-    /* check whether we should be using the light theme now */
-    #define USE_FIRST(first, second, current) { (first < second) \
-        ? current >= first && current < second \
-        : current >= first || current < second };
-    bool use_mins = light_time.tm_hour == dark_time.tm_hour;
-    bool hr = USE_FIRST(light_time.tm_hour, dark_time.tm_hour, current.tm_hour);
-    bool min = USE_FIRST(light_time.tm_min, dark_time.tm_min, current.tm_min);
-    bool use_light = ((use_mins && min) || (hr && min));
+    /* if we got the use_light value from the script, use it, otherwise fall
+     * back to our config */
+    bool use_light = false;
+    if (script_result == 0 || script_result == 256) {
+        use_light = (bool)(script_result == 0);
+    } else {
+        /* get the current time */
+        time_t now = time(NULL);
+        struct tm current = *localtime(&now);
+
+        /* check whether we should be using the light theme now */
+        #define USE_FIRST(first, second, current) { (first < second) \
+            ? current >= first && current < second \
+            : current >= first || current < second };
+        bool use_mins = light_time.tm_hour == dark_time.tm_hour;
+        bool hr = USE_FIRST(
+                light_time.tm_hour, dark_time.tm_hour, current.tm_hour);
+        bool min = USE_FIRST(
+                light_time.tm_min, dark_time.tm_min, current.tm_min);
+        use_light = ((use_mins && min) || (hr && min));
+    }
 
     /* set the colorscheme */
     struct colors_t *cs_to_use = use_light ? light_theme : dark_theme;
@@ -2100,10 +2113,10 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-	// timeresetcolors();
-	colorscheme = dark_theme;
-	colorscheme_locked = true;
-	resetglobalcolors();
+	timeresetcolors();
+	// colorscheme = dark_theme;
+	// colorscheme_locked = true;
+	// resetglobalcolors();
 
 	xw.l = xw.t = 0;
 	xw.isfixed = False;

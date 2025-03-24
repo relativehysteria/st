@@ -31,7 +31,7 @@ static struct colors_t interspectre = {
         "#2DB7C4",
         "#AD8CD3",
 
-        [29] = 0,
+        [29] = "#000000",
 
         "#CCCCCC",
         "#555555",

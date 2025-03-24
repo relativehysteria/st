@@ -4,8 +4,8 @@
 #include "colors.h"
 
 static struct colors_t papertheme = {
-    .alpha = 0.8,
-    .alphaUnfocused = 0.7,
+    .alpha = 0.9,
+    .alphaUnfocused = 0.5,
 
     .defaultfg = 0,
     .defaultbg = 7,
@@ -20,7 +20,7 @@ static struct colors_t papertheme = {
         "#1E6FCC",
         "#5C21A5",
         "#158C86",
-        "#AAAAAA",
+        "#DADADA",
 
         "#555555",
         "#CC3E28",
